@@ -6,7 +6,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const { requireAuth } = require("@clerk/express");
 const databases = require("./config.js");
-const { ID } = require("node-appwrite");
+const { ID, Query } = require("node-appwrite");
 
 app.use(cors());
 
@@ -40,11 +40,12 @@ io.on("connection", (socket) => {
 
 //db code
 
-async function getData() {
+async function getData(userId) {
   const res = await databases.listDocuments(
     "672a21380017c6757f4d",
     "672a22fb0023df2b34e3"
   );
+  [Query.equal("userid", [userId])];
 
   return res;
 }
@@ -65,7 +66,7 @@ async function postData(data) {
   return res;
 }
 
-async function deleteData(documentID) {
+async function deleteData(userId, documentID) {
   const res = await databases.deleteDocument(
     "672a21380017c6757f4d",
     "672a22fb0023df2b34e3",
@@ -75,7 +76,7 @@ async function deleteData(documentID) {
   return res;
 }
 
-app.get("/protected", requireAuth(), (req, res) => {
+app.get("/test", requireAuth(), (req, res) => {
   const { userId } = req.auth;
 
   res.json({
@@ -85,11 +86,12 @@ app.get("/protected", requireAuth(), (req, res) => {
 });
 
 app.get("/getList", requireAuth(), async (req, res) => {
-  const data = await getData();
+  const { userId } = req.auth;
+  const data = await getData(userId);
   res.json(data);
 });
 
-app.get("/addList", requireAuth(), async (req, res) => {
+app.post("/addList", requireAuth(), async (req, res) => {
   const { user1_transcript, user2_transcript, userid, summary } = req.body;
   const data = await postData(
     user1_transcript,
@@ -101,8 +103,10 @@ app.get("/addList", requireAuth(), async (req, res) => {
   res.json(data);
 });
 
-app.get("/delete", requireAuth(), async (req, res) => {
-  const data = await deleteData();
+app.delete("/deleteList", requireAuth(), async (req, res) => {
+  const { userId } = req.auth;
+  const { documentID } = req.body;
+  const data = await deleteData(userId, documentID);
 
   res.json(data);
 });
