@@ -43,14 +43,14 @@ io.on("connection", (socket) => {
 async function getData(userId) {
   const res = await databases.listDocuments(
     "672a21380017c6757f4d",
-    "672a22fb0023df2b34e3"
+    "672a22fb0023df2b34e3",
+    [Query.equal("userid", [userId])]
   );
-  [Query.equal("userid", [userId])];
 
   return res;
 }
 
-async function postData(data) {
+async function postData(user1_transcript, user2_transcript, userId, summary) {
   const res = await databases.createDocument(
     "672a21380017c6757f4d",
     "672a22fb0023df2b34e3",
@@ -58,7 +58,7 @@ async function postData(data) {
     {
       user1_transcript,
       user2_transcript,
-      userid,
+      userid: userId,
       summary,
     }
   );
@@ -92,11 +92,12 @@ app.get("/getList", requireAuth(), async (req, res) => {
 });
 
 app.post("/addList", requireAuth(), async (req, res) => {
-  const { user1_transcript, user2_transcript, userid, summary } = req.body;
+  const { userId } = req.auth;
+  const { user1_transcript, user2_transcript, summary } = req.body;
   const data = await postData(
     user1_transcript,
     user2_transcript,
-    userid,
+    userId,
     summary
   );
 
