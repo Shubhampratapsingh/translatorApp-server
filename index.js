@@ -55,10 +55,10 @@ async function postData(data) {
     "672a22fb0023df2b34e3",
     ID.unique(),
     {
-      user1_transcript: data?.user1_transcript,
-      user2_transcript: data?.user2_transcript,
-      userid: data?.userId,
-      summary: data?.summary,
+      user1_transcript,
+      user2_transcript,
+      userid,
+      summary,
     }
   );
 
@@ -84,28 +84,27 @@ app.get("/protected", requireAuth(), (req, res) => {
   });
 });
 
-app.get("/getlist", requireAuth(), (req, res) => {
-  const data = getData();
-
-  res.json({
-    data,
-  });
+app.get("/getList", requireAuth(), async (req, res) => {
+  const data = await getData();
+  res.json(data);
 });
 
-app.get("/addList", requireAuth(), (req, res) => {
-  const data = postData();
+app.get("/addList", requireAuth(), async (req, res) => {
+  const { user1_transcript, user2_transcript, userid, summary } = req.body;
+  const data = await postData(
+    user1_transcript,
+    user2_transcript,
+    userid,
+    summary
+  );
 
-  res.json({
-    data,
-  });
+  res.json(data);
 });
 
-app.get("/delete", requireAuth(), (req, res) => {
-  const data = deleteData();
+app.get("/delete", requireAuth(), async (req, res) => {
+  const data = await deleteData();
 
-  res.json({
-    data,
-  });
+  res.json(data);
 });
 
 server.listen(PORT, () => {
