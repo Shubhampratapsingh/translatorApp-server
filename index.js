@@ -9,6 +9,7 @@ const databases = require("./config.js");
 const { ID, Query } = require("node-appwrite");
 
 app.use(cors());
+app.use(express.json());
 
 const server = http.createServer(app);
 const PORT = process.env.PORT || 9000;
@@ -17,7 +18,7 @@ const PORT = process.env.PORT || 9000;
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE", "OPTIONS"],
   },
 });
 
@@ -85,13 +86,13 @@ app.get("/test", requireAuth(), (req, res) => {
   });
 });
 
-app.get("/getList", requireAuth(), async (req, res) => {
+app.get("/getTranscript", requireAuth(), async (req, res) => {
   const { userId } = req.auth;
   const data = await getData(userId);
   res.json(data);
 });
 
-app.post("/addList", requireAuth(), async (req, res) => {
+app.post("/addTranscript", requireAuth(), async (req, res) => {
   const { userId } = req.auth;
   const { user1_transcript, user2_transcript, summary } = req.body;
   const data = await postData(
@@ -104,7 +105,7 @@ app.post("/addList", requireAuth(), async (req, res) => {
   res.json(data);
 });
 
-app.delete("/deleteList", requireAuth(), async (req, res) => {
+app.delete("/deleteTranscript", requireAuth(), async (req, res) => {
   const { userId } = req.auth;
   const { documentID } = req.body;
   const data = await deleteData(userId, documentID);
