@@ -105,9 +105,9 @@ app.post("/addTranscript", requireAuth(), async (req, res) => {
   res.json(data);
 });
 
-app.delete("/deleteTranscript", requireAuth(), async (req, res) => {
+app.delete("/deleteTranscript/:documentID", requireAuth(), async (req, res) => {
   const { userId } = req.auth;
-  const { documentID } = req.body;
+  const { documentID } = req.params;
   const data = await deleteData(userId, documentID);
 
   res.json(data);
