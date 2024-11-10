@@ -77,12 +77,18 @@ async function deleteData(userId, documentID) {
   return res;
 }
 
-app.get("/test", requireAuth(), (req, res) => {
+app.get("/privateTest", requireAuth(), (req, res) => {
   const { userId } = req.auth;
 
   res.json({
     message: "You are authenticated!",
     userId,
+  });
+});
+
+app.get("/publicTest", (req, res) => {
+  res.json({
+    message: "You are not authenticated!",
   });
 });
 
