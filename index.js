@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 9000;
 //socket io code
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://quicklator.vercel.app"],
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
   },
 });
